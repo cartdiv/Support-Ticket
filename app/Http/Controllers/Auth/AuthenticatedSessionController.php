@@ -29,7 +29,19 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        $url = '';
+        if($request->user()->role === 'landlord'){
+            $url = '/landlord/dashboard';
+        }elseif($request->user()->role === 'tenant'){
+            $url = '/tenant/dashboard';
+        }elseif($request->user()->role === 'user'){
+            $url = '/dashboard';
+        }
+        $nottification = array(
+            'message' => 'Login successfully',
+            'alert-type' => 'success',
+        );
+        return redirect()->intended($url)->with($nottification);
     }
 
     /**
@@ -43,6 +55,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        $nottification = array(
+            'message' => 'Logout successfully',
+            'alert-type' => 'success',
+        );
+        return redirect('/')->with($nottification);
     }
 }
